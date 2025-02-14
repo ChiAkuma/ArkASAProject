@@ -38,4 +38,7 @@ export default {
 </template>
 
 <style scoped>
+p {
+    margin: 5px;
+}
 </style>

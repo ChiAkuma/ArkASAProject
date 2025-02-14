@@ -18,7 +18,7 @@ def greetings():
 
 @app.route('/shark', methods=['GET'])
 def shark():
-    return "<h1>This is a Shark and you are too!</h1>"
+    return "This is a Shark and you are too!"
 
 if __name__ == "__main__":
     app.run(debug=True)
