@@ -4,7 +4,8 @@
         <h1>This is the Default Component of this fucking thing in this elaborate hindum</h1>
     </div>
     
-    <Table_ModList id="sizing"/>
+    <p>{{ msg }}</p>
+    <Table_ModList @data="whaa('data')" ref="mlist" id="sizing"/>
 </template>
 
 <script setup>
@@ -13,8 +14,19 @@
 
 <script>
     export default {
-        
+        data() {
+            return {
+                msg: ""
+            }
+        },
+        methods: {
+            whaa(data) {
+                console.log(data);
+                this.msg = this.$refs.mlist.getModServerArg();
+            }
+        }
     }
+    
 </script>
 
 <style lang="scss" scoped>
@@ -29,6 +41,10 @@
 
     h1 {
         margin: 0;
-        margin-left: 5px;
+        padding-left: 5px;
+    }
+
+    p {
+        padding-left: 5px;;
     }
 </style>
