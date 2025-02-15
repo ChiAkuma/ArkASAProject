@@ -1,9 +1,12 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-app = Flask(__name__)
+from ModList import ModList, Mod
 
+app = Flask(__name__)
 app.config.from_object(__name__)
+
+modlist: ModList = ModList()
 
 #CORS(app, resources={r"/*":{'origins':"*"}})
 CORS(app, resources={r"/*":
@@ -14,11 +17,15 @@ CORS(app, resources={r"/*":
 #hello world route
 @app.route('/', methods=['GET'])
 def greetings():
-    return("Hello, World!")
+    return jsonify("Hello, World!")
 
 @app.route('/shark', methods=['GET'])
 def shark():
-    return "This is a Shark and you are too!"
+    return jsonify("This is a Shark and you are too!")
+
+@app.route('/modlist', methods=['GET'])
+def view_modlist():
+    return jsonify(modlist.getModList())
 
 if __name__ == "__main__":
     app.run(debug=True)
