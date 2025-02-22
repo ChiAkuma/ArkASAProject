@@ -1,15 +1,16 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div id="huu">
-        <h1>This is the Default Component of this fucking thing in this elaborate hindum</h1>
+        <h1>This is the Default Component of this App</h1>
     </div>
     
-    <p>{{ msg }}</p>
-    <Table_ModList @data="whaa('data')" ref="mlist" id="sizing"/>
+    <span>Copy to clipboard:</span>
+    <span class="box" v-on:click="copyText($event)">{{ msg }}</span>
+    <Table_ModList v-on:data="whaa('data')" ref="tml" id="sizing"/>
 </template>
 
 <script setup>
-    import Table_ModList from '@/components/Table_ModList.vue';
+    import Table_ModList from '@/components/ModList/List_Mods.vue';
 </script>
 
 <script>
@@ -22,7 +23,11 @@
         methods: {
             whaa(data) {
                 console.log(data);
-                this.msg = this.$refs.mlist.getModServerArg();
+                this.msg = this.$refs.tml.getModServerArg();
+            },
+            copyText(event) {
+                var text = event.originalTarget.innerText;
+                navigator.clipboard.writeText(text);
             }
         }
     }
@@ -31,8 +36,15 @@
 
 <style lang="scss" scoped>
     #sizing {
-        max-width: fit-content;
-        max-height: 400pt;
+        max-height: 70vh;
+    }
+
+    .box {
+        display: block;
+        background-color: #edf6ff;
+        box-shadow: 1pt 1pt 1pt 1pt black;
+        padding: 5pt;
+        margin-bottom: 2pt;
     }
 
     #huu {

@@ -1,6 +1,6 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
-import Table_ModList from '@/components/Table_ModList.vue';
+import Table_ModList from '@/components/ModList/List_Mods.vue';
 </script>
 
 <!-- eslint-disable no-unused-vars -->

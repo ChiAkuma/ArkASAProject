@@ -10,13 +10,11 @@ class ModList:
     def __init__(self):
         stream = open("./mods.yml", "r")
         document = load(stream, Loader=Loader)
-        print(document)
         for x in document["EnabledMods"]:
             try:
                 modid = int(x)
                 modname = document["EnabledMods"][x]
-                print(type(modid))
-                print(self.addMod(modid, modname))
+                self.addMod(modid, modname)
             except ValueError:
                 print("Valueerror in init")
         self.list_mods.sort(key=lambda mod: mod.name)

@@ -24,6 +24,7 @@
 import axios from 'axios';
 
 export default {
+    emits: ['data'],
     name: 'ModList',
     data() {
         return {
@@ -105,7 +106,6 @@ td{
 
 tr:nth-child(even){background-color: #f2f2f2;}
 tr:hover {background-color: #ddd;}
-tr .selected {background-color:orange}
 
 th {
     //padding-top: 12px;
@@ -115,7 +115,7 @@ th {
     top: 0;
 
     text-align: left;
-    background-color: #04AA6D;
+    background-color: #1d9240;
     color: white;
 
     font-size: large;
@@ -128,11 +128,19 @@ th {
 }
 
 tbody .selected {
-    background-color: #7aeaea;
-    border: none;
+    background-color: #a0f8f8;
+    border: #a0f8f8;
 }
 
 tbody .selected td {
-    border: none;
+    border: 1px solid #8ee1e1;
+}
+
+tbody .selected:nth-child(even) {
+    background-color: #8ee1e1;
+}
+
+tbody .selected:nth-child(even) td {
+    border: 1px solid #a0f8f8;
 }
 </style>
