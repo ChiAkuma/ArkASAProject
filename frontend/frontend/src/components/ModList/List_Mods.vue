@@ -9,10 +9,10 @@
                     <th id="modname">ModName</th>
                 </tr>
                 
-                <tr v-for="(value, key, index) in modlist" :key="key" v-on:click="selected($event, key)">
+                <tr v-for="(mod, index) in modlist" :key="mod['id']" v-on:click="selected($event, key)">
                     <td>{{ index }}</td>
-                    <td>{{ key }}</td>
-                    <td>{{ value }}</td>
+                    <td>{{ mod["id"] }}</td>
+                    <td>{{ mod["name"] }}</td>
                 </tr>
             </tbody>
 
@@ -38,7 +38,12 @@ export default {
             axios.get(path)
             .then((res) => {
                 console.log(res.data);
-                this.modlist = res.data;
+                for (let index = 0; index < Object.keys(res.data).length; index++) {
+                    this.modlist[index] = res.data[index]
+                    
+                }
+                console.log("heeeya: " + this.modlist)
+                //this.modlist = res.data;
                 console.log("INSIDE");
                 this.$emit('data', this.modlist);
             })
@@ -52,15 +57,14 @@ export default {
             var modcache = [];
 
             console.log("logtest: " + this.modlist);
-            console.log("logtest2: " + this.modlist[0]);
-            var ob = Object.entries(this.modlist);
-            console.log("ob: " + ob);
-            console.log("obkey: " + ob.values());
+            console.log("logtest2: " + this.modlist[0]["id"]);
             // TODO: Rausfinden ob nutzlos weil muss auf Server
-            ob.values().forEach((mod, index) => {
-                console.log("k:" + mod[0] + " v:" + mod[1] + " i:" + index);
-                modcache.push(mod[0]);
-            });
+            for (let index = 0; index < Object.keys(this.modlist).length; index++) {
+                var mod = this.modlist[index];
+                console.log("k:" + mod["id"] + " v:" + mod["name"] + " i:" + index);
+                modcache.push(mod["id"]);
+                
+            }
             console.log("mcc: " + modcache);
             modarg = "mods=" + modcache.join(',');
             console.log(modarg);

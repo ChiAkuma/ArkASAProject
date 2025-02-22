@@ -37,6 +37,7 @@
 <style lang="scss" scoped>
     #sizing {
         max-height: 70vh;
+        max-width: 50%;
     }
 
     .box {
