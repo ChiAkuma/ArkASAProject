@@ -5,7 +5,7 @@
     </div>
     
     <span>Copy to clipboard:</span>
-    <span class="box" v-on:click="copyText($event)">{{ msg }}</span>
+    <span class="box" v-on:click="copyText($event)">&nbsp;&#8209;{{ msg }}</span>
     <Table_ModList v-on:data="whaa('data')" ref="tml" id="sizing"/>
 </template>
 
