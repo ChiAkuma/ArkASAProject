@@ -1,26 +1,62 @@
 <template>
     <div>
+        <!-- Deaktivierter Refresh-Button -->
         <!-- <button v-on:click="getModList()">ModList aktualisieren</button> -->
+        
         <table>
             <tbody>
+                <!-- Tabellenkopf mit Spaltenüberschriften -->
                 <tr>
-                    <th id="number">No.</th>
-                    <th id="modid">ModId</th>
-                    <th id="modname">ModName</th>
+                    <th id="number">No.</th>  <!-- Indexspalte -->
+                    <th id="modid">ModId</th> <!-- Mod-ID Spalte -->
+                    <th id="modname">ModName</th> <!-- Modname Spalte -->
                 </tr>
                 
-                <tr v-for="(mod, index) in modlist" :key="mod['id']" v-on:click="selected($event, key)">
-                    <td>{{ index }}</td>
-                    <td>{{ mod["id"] }}</td>
-                    <td>{{ mod["name"] }}</td>
+                <!-- Dynamische Zeilen für Modliste -->
+                <tr 
+                    v-for="(mod, index) in modlist" 
+                    :key="mod['id']"
+                    v-on:click="select_item($event, index)"
+                    draggable="true"
+                    @dragstart="onDrag($event, index)"
+                    @drop="onDrop($event, 1)"
+                    @dragover.prevent="onDragover($event, index)"
+                    @dragend="onDragend($event, index)"
+                    :class="{
+                        'drag-start': index === oldIndex,
+                        'drag-over': index === newIndex,
+                        'selected': index === selected,
+                    }"
+                >
+                    <!-- Zeileninhalte -->
+                    <td>{{ index }}</td> <!-- Laufende Nummer -->
+                    <td>{{ mod["id"] }}</td> <!-- Mod-ID Anzeige -->
+                    <td>{{ mod["name"] }}</td> <!-- Modname Anzeige -->
                 </tr>
             </tbody>
-
         </table>
+        <ConfirmationDialog v-model="showConfirmation" @confirm="performDrop()" @cancel="cancelDrop()">
+            <template v-slot:content>
+                Möchten Sie diese Aktion wirklich durchführen?<br>
+                Du könntest hierbei deine Mods in die falsche Reihenfolge bringen!
+            </template>
+        </ConfirmationDialog>
     </div>
 </template>
 
+
+<script setup>
+    import ConfirmationDialog from '../ConfirmationDialog.vue';
+</script>
+
 <script>
+/* 
+  ❗️ Komponentenlogik
+  - Verwaltet Modliste mit Drag & Drop
+  - Kommuniziert mit Flask-Backend
+  - Emittet Änderungen an Parent-Komponente
+
+*/
 import axios from 'axios';
 
 export default {
@@ -28,123 +64,148 @@ export default {
     name: 'ModList',
     data() {
         return {
-            modlist: {}
+            modlist: [],   // Gespeicherte Modliste
+            oldIndex:null, // Drag-Startposition
+            newIndex:null, // Drag-Zielposition
+            selected:null, // Ausgewählter Index
+            showConfirmation:false,
         }
     },
     methods: {
+        // API-Abruf für Modliste
         getModList() {
             const path = 'http://localhost:5000/modlist';
-            // Backend connection to Flask
             axios.get(path)
             .then((res) => {
-                console.log(res.data);
+                // Transformiert Serverresponse
                 for (let index = 0; index < Object.keys(res.data).length; index++) {
                     this.modlist[index] = res.data[index]
-                    
                 }
-                console.log("heeeya: " + this.modlist)
-                //this.modlist = res.data;
-                console.log("INSIDE");
                 this.$emit('data', this.modlist);
             })
             .catch((err) => {
-                console.error(err);
+                console.error("API Error: " + err);
             });    
         },
+        // Erstellt Server-Parameter String
         getModServerArg() {
-            
-            var modarg = "";
-            var modcache = [];
-
-            console.log("logtest: " + this.modlist);
-            console.log("logtest2: " + this.modlist[0]["id"]);
-            // TODO: Rausfinden ob nutzlos weil muss auf Server
-            for (let index = 0; index < Object.keys(this.modlist).length; index++) {
-                var mod = this.modlist[index];
-                console.log("k:" + mod["id"] + " v:" + mod["name"] + " i:" + index);
-                modcache.push(mod["id"]);
-                
-            }
-            console.log("mcc: " + modcache);
-            modarg = "mods=" + modcache.join(',');
-            console.log(modarg);
-            return modarg;
+            let modarg = "mods=";
+            const modcache = this.modlist.map(mod => mod.id);
+            return modarg + modcache.join(',');
         },
-        selected(event, modid) {
-            console.log("selected element: " + modid);
-            console.log(event);
-            event.currentTarget.classList.toggle('selected');
-            // TODO: Finish selector
-            // TODO: Adding to modlist
-            // TODO: Remove from modlist when selected
+
+        // Zeilenauswahl-Handler
+        select_item(event, index) {
+            this.selected = index;
+        },
+
+        // Drag & Drop Event-Handler
+        onDrag(evt, oldIndex) {
+            this.selected = null;
+            this.oldIndex = oldIndex;
+            evt.dataTransfer.effectAllowed = 'move';
+        },
+
+        onDragover(evt, newIndex) {
+            this.newIndex = newIndex;
+        },
+
+        onDrop() {
+            // Abfrage von ConfirmationDialog
+            this.showConfirmation = true;
+        },
+        performDrop() {
+            // Array-Operation zum Verschieben
+            const removed = this.modlist.splice(this.oldIndex, 1)[0];
+            this.modlist.splice(this.newIndex, 0, removed);
+        },
+        cancelDrop() {
+            console.log("confirmation canceled... doing nothing");
+        },
+        onDragend() {
+            this.selected = null;
+            this.oldIndex = null;
+            this.newIndex = null;
+            this.$emit('data', this.modlist);
         }
     },
     created() {
+        // Initialer Datenabruf
         this.getModList();
-        
-        console.log("OUTSIDE");
     }
 }
-// TODO: ModList table sorting
-// TODO: ModList select item
-
 </script>
 
 <style lang="scss" scoped>
+/* ❗️ Scrollcontainer für Tabelle */
 div{
     display: block;
     overflow: scroll;
+    user-select:none; /* Verhindert Textauswahl */
 }
 
-table {
-    border-collapse: collapse;
-    margin: 0;
-    top: 0;
-    width: 100%;
-}
-
-td{
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-tr:nth-child(even){background-color: #f2f2f2;}
-tr:hover {background-color: #ddd;}
-
+/* ❗️ Tabellensticky-Header */
 th {
-    //padding-top: 12px;
-    //padding-bottom: 12px;
-    padding: 8px;
     position: sticky;
-    top: 0;
-
-    text-align: left;
+    top: 0; /* Fixiert Header beim Scrollen */
+    padding: 8px;
     background-color: #1d9240;
     color: white;
-
     font-size: large;
     font-weight: bolder;
 }
 
-#number {
-    width: 0;
-    //max-width: fit-content;
+/* ❗️ Drag & Drop Visuals */
+.drag-start {
+    background-color: gold !important; /* Hervorgehobenes ziehendes Element */
 }
 
-tbody .selected {
+.drag-over {
+    outline: 2px dashed black !important; /* Drop-Zielmarkierung */
+    color: #ab3232;
+}
+
+/* ❗️ Basis-Tabellenformatierung */
+table {
+    border-collapse: collapse;
+    margin: 0;
+    width: 100%;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+/* ❗️ Zebra-Striping für Zeilen */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+/* ❗️ Zeilenselektion */
+.selected {
     background-color: #a0f8f8;
     border: #a0f8f8;
 }
 
-tbody .selected td {
+.selected td {
     border: 1px solid #8ee1e1;
 }
 
-tbody .selected:nth-child(even) {
+.selected:nth-child(even) {
     background-color: #8ee1e1;
 }
 
-tbody .selected:nth-child(even) td {
+.selected:nth-child(even) td {
     border: 1px solid #a0f8f8;
+}
+
+/* ❗️ Spaltenbreite für Index-Spalte */
+#number {
+    width: 0;
 }
 </style>

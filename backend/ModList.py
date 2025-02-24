@@ -15,7 +15,6 @@ class ModList:
                 modid = int(x)
                 modname = document["EnabledMods"][x]
                 self.addMod(modid, modname)
-                print(modid)
             except ValueError:
                 print("Valueerror in init")
         #self.list_mods.sort(key=lambda mod: mod.name)
@@ -57,7 +56,6 @@ class ModList:
         for mod in self.list_mods:
             mod: Mod = mod
             cache[index] = {"id": mod.modid, "name": mod.name}
-            print(index)
             index += 1
         return cache
 

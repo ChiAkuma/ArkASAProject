@@ -10,7 +10,7 @@ modlist: ModList = ModList()
 
 #CORS(app, resources={r"/*":{'origins':"*"}})
 CORS(app, resources={r"/*":
-                     {'origins':'http://localhost:8080',
+                     {'origins':'http://localhost:5173',
                       "allow_headers":"Access-Control-Allow-Origin"
                       }})
 

@@ -6,7 +6,7 @@
     
     <span>Copy to clipboard:</span>
     <span class="box" v-on:click="copyText($event)">&nbsp;&#8209;{{ msg }}</span>
-    <Table_ModList v-on:data="whaa('data')" ref="tml" id="sizing"/>
+    <Table_ModList v-on:data="gmlsa()" ref="tml" id="sizing"/>
 </template>
 
 <script setup>
@@ -21,8 +21,7 @@
             }
         },
         methods: {
-            whaa(data) {
-                console.log(data);
+            gmlsa() {
                 this.msg = this.$refs.tml.getModServerArg();
             },
             copyText(event) {

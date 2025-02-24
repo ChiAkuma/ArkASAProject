@@ -7,5 +7,7 @@
 			"path": "frontend"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"workbench.editor.labelFormat": "medium"
+	}
 }
