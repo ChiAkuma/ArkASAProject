@@ -6,7 +6,7 @@
     
     <span>Copy to clipboard:</span>
     <span class="box" v-on:click="copyText($event)">&nbsp;&#8209;{{ msg }}</span>
-    <Table_ModList v-on:data="gmlsa()" ref="tml" id="sizing"/>
+    <Table_ModList ref="table_modlist" v-on:data="(instance) => gmlsa(instance)" id="sizing"/>
 </template>
 
 <script setup>
@@ -21,8 +21,8 @@
             }
         },
         methods: {
-            gmlsa() {
-                this.msg = this.$refs.tml.getModServerArg();
+            gmlsa(instance) {
+                this.msg = instance.getModServerArg();
             },
             copyText(event) {
                 var text = event.originalTarget.innerText;
@@ -35,8 +35,8 @@
 
 <style lang="scss" scoped>
     #sizing {
-        max-height: 70vh;
-        max-width: 50%;
+        height: 600px;
+        width: 800px;
     }
 
     .box {

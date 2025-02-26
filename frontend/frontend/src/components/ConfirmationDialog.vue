@@ -63,32 +63,47 @@ export default {
         }
     },
     watch: {
-        visible(/* val */) {
-            /*
+        visible(val) {
             if (val) {
                 document.addEventListener('keydown', this.handleKeydown)
             } else {
                 document.removeEventListener('keydown', this.handleKeydown)
-            }*/
+            }
         },
     },
     methods: {
         handleCancel() {
             console.log("Cancel");
+            this.$emit('cancel')
         },
         handleConfirm() {
             console.log("Confirm");
+            this.$emit('confirm');
         },
         handleClose() {
             console.log("Close");
             this.$emit('update:visible', false)
             this.$emit('cancel')
+        },
+        handleKeydown(event) {
+            if(event.key === "Escape"){       
+                console.log("cancel");
+                this.$emit('cancel')
+            }
+            else if(event.key === "Enter") {
+                console.log("enter");
+                this.$emit('confirm');
+            }
         }
     }
 }
 </script>
 
 <style scoped>
+template {
+    display: block;
+}
+
 .dialog-mask {
     position: fixed;
     top: 0;

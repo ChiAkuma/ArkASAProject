@@ -8,8 +8,11 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style>
-body {
+body, #app{
   margin: 0;
+  width: 100%;
+
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 </style>
 
